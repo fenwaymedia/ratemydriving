@@ -1,7 +1,7 @@
-var nick = 'hello cruel world';
+const express = require('express')
+const app = express()
+const port = 3000
 
-xxxx;
+app.get('/', (req, res) => res.send('Hello World!'))
 
-console.log('hi there');
-
-console.log('updating changes/ owning github');
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
