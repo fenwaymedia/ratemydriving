@@ -15,8 +15,10 @@ exports.product_create = function (req, res) {
 
     product.save(function (err) {
         if (err) {
-            return next(err);
+            console.log(err);
         }
         res.send('Product Created successfully')
     })
+
+    console.log(req.body.name)
 };
