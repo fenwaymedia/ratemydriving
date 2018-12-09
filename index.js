@@ -1,27 +1,63 @@
 const express = require('express');
+const path = require('path');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const app  = express();
 
-const product = require('./routes/product.routes'); // Imports routes for the products
-const app = express();
+const product = require('./routes/product.index')
+const home = require('./routes/home.routes');
+const config = require('./config/database');
+
+// Connect To Database
+mongoose.connect(config.database, { useNewUrlParser: true });
+
+// On Connection
+mongoose.connection.on('connected', () => {
+  console.log('Connected to database '+ config.database);
+});
+
+// On Error
+mongoose.connection.on('error', (err) => {
+  console.log('Database error: '+err);
+});
+
+
+// Port Number
+const port = 3000;
+
+// CORS Middleware
+// app.use(cors());
+
+// Set Static Folder
+app.use(express.static(path.join(__dirname, 'client')));
+
+// Body Parser Middleware
+app.use(bodyParser.json());
+
+app.use('/home', home);
+
+// Index Route
+app.get('/', (req, res) => {
+  res.send('Invalid Endpoint');
+});
+
+// Start Server
+app.listen(port, () => {
+  console.log('Server started on port '+ port);
+});
 
 // Set up mongoose connection
-const mongoose = require('mongoose');
-let dev_db_url = 'mongodb://someuser:1234asdf@ds037077.mlab.com:37077/nicksproductutorial';
-let mongoDB = process.env.MONGODB_URI || dev_db_url;
-mongoose.connect(mongoDB, { useNewUrlParser: true });
-mongoose.Promise = global.Promise;
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use('/products', product);
-
-let port = 3000;
-
-app.listen(port, () => {
-    console.log('Server is up and running on port numner ' + port);
-});
+// let dev_db_url = 'mongodb://someuser:1234asdf@ds037077.mlab.com:37077/nicksproductutorial';
+// let mongoDB = process.env.MONGODB_URI || dev_db_url;
+// mongoose.connect(mongoDB, { useNewUrlParser: true });
+// mongoose.Promise = global.Promise;
+// const db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+//
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({extended: false}));
+// app.use('/products', product);
+//
 
 
 
