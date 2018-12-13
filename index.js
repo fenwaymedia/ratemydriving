@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+var cors = require('cors');
 const app  = express();
 
 const product = require('./routes/product.index')
@@ -21,6 +22,8 @@ mongoose.connection.on('error', (err) => {
   console.log('Database error: '+err);
 });
 
+app.use(cors());
+
 
 // Port Number
 const port = 3000;
@@ -34,12 +37,20 @@ app.use(express.static(path.join(__dirname, 'client')));
 // Body Parser Middleware
 app.use(bodyParser.json());
 
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+}
+
 app.use('/home', home);
 
 // Index Route
 app.get('/', (req, res) => {
   res.send('Invalid Endpoint');
 });
+
 
 // Start Server
 app.listen(port, () => {
